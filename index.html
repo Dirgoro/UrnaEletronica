@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urna Eletrônica</title>
+    <!-- Vinculação do arquivo de estilização externa CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ETAPA 1: TELA DE CADASTRO DE CANDIDATOS -->
+    <div id="tela-cadastro">
+        <h2>Cadastro de Candidatos (Até 10)</h2>
+        <form id="form-cadastro">
+            <div>
+                <label for="cad-numero">Número do Candidato:</label>
+                <input type="number" id="cad-numero" required min="1">
+            </div>
+            <div>
+                <label for="cad-nome">Nome do Candidato:</label>
+                <input type="text" id="cad-nome" required>
+            </div>
+            <button type="submit" id="btn-cadastrar">Cadastrar Candidato</button>
+        </form>
+        <p id="msg-cadastro"></p>
+    </div>
+
+    <!-- ETAPA 2: TELA DE VOTAÇÃO (Inicia oculta) -->
+    <div id="tela-votacao" style="display: none;">
+        <div class="test">
+            <h2>Urna Eletrônica</h2>
+            
+            <div class="painel-voto">
+                <p class="instrucao">SEU VOTO VAI PARA:</p>
+                
+                <!-- Retângulo solicitado para inserção do número -->
+                <div class="campo-numero">
+                    <input type="number" id="voto-numero" placeholder="Nº" autofocus>
+                </div>
+
+                <!-- Campos dinâmicos preenchidos pelo JS -->
+                <div class="info-candidato">
+                    <p>Nome: <span id="voto-nome">...</span></p>
+                </div>
+            </div>
+
+            <!-- Botões de controle da urna -->
+            <div class="teclado-acoes">
+                <button id="btn-branco">BRANCO</button>
+                <button id="btn-corrige">CORRIGE</button>
+                <button id="btn-confirma">CONFIRMA</button>
+            </div>
+            
+            <!-- Botão administrativo para encerrar a votação e ver o relatório -->
+            <button id="btn-encerrar">Encerrar Eleição</button>
+        </div>
+    </div>
+
+    <!-- ETAPA 3: TELA DE RESULTADOS / RELATÓRIO FINAL (Inicia oculta) -->
+    <div id="tela-resultado" style="display: none;">
+        <h2>Relatório Final da Eleição</h2>
+        
+        <div id="ranking-candidatos">
+            <!-- Lista com votos de cada candidato gerada por JS -->
+        </div>
+
+        <div class="votos-gerais">
+            <p>Votos em Branco: <span id="total-branco">0</span></p>
+            <p>Votos Nulos: <span id="total-nulos">0</span></p>
+            <p>Total Geral de Votos: <span id="total-geral">0</span></p>
+        </div>
+
+        <button id="btn-reiniciar">Nova Eleição</button>
+    </div>
+
+    <!-- Vinculação do arquivo de comportamento dinâmico JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

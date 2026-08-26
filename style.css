@@ -1,0 +1,231 @@
+/* Configurações Globais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f7f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Containers das Telas */
+#tela-cadastro, #tela-votacao, #tela-resultado {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+h2, h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+}
+
+/* Formulário de Cadastro */
+#form-cadastro div {
+    margin-bottom: 15px;
+}
+
+#form-cadastro label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+#form-cadastro input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+#form-cadastro input:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+#btn-cadastrar, #btn-encerrar, #btn-reiniciar {
+    width: 100%;
+    padding: 14px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-transform: uppercase;
+}
+
+#btn-cadastrar:hover { background-color: #2980b9; }
+#btn-encerrar { background-color: #c0392b; margin-top: 20px; }
+#btn-encerrar:hover { background-color: #a93226; }
+#btn-reiniciar { background-color: #27ae60; margin-top: 20px; }
+#btn-reiniciar:hover { background-color: #219653; }
+
+#msg-cadastro {
+    margin-top: 15px;
+    color: #27ae60;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* Painel Visual da Urna */
+.painel-voto {
+    background-color: #eef2f3;
+    border: 4px solid #34495e;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    min-height: 180px;
+}
+
+.instrucao {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* O Retângulo Solicitado para Inserção do Número */
+.campo-numero {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#voto-numero {
+    width: 90px;
+    height: 70px;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    border: 3px solid #2c3e50;
+    background: #fff;
+    color: #2c3e50;
+    border-radius: 4px;
+}
+
+#voto-numero::-webkit-inner-spin-button, 
+#voto-numero::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+}
+
+/* Exibição Dinâmica do Nome */
+.info-candidato {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #2c3e50;
+    border-top: 1px solid #bdc3c7;
+    padding-top: 15px;
+}
+
+#voto-nome {
+    color: #2980b9;
+}
+
+/* Teclado de Ações da Urna */
+.teclado-acoes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.teclado-acoes button {
+    padding: 15px 5px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #7f8c8d;
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.teclado-acoes button:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+#btn-branco {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #bdc3c7;
+    box-shadow: 0 4px 0 #bdc3c7;
+}
+
+#btn-corrige {
+    background-color: #e67e22;
+    color: #ffffff;
+    box-shadow: 0 4px 0 #d35400;
+}
+
+#btn-confirma {
+    background-color: #2ecc71;
+    color: #ffffff;
+    box-shadow: 0 4px 0 #27ae60;
+    font-size: 0.95rem;
+}
+
+/* Tela de Resultados / Relatório Final */
+#ranking-candidatos {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border-left: 5px solid #3498db;
+}
+
+#ranking-candidatos p {
+    padding: 8px 0;
+    border-bottom: 1px dashed #ddd;
+    color: #333;
+    font-weight: 500;
+}
+
+#ranking-candidatos p:last-child {
+    border-bottom: none;
+}
+
+.votos-gerais {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 5px solid #7f8c8d;
+}
+
+.votos-gerais p {
+    margin-bottom: 8px;
+    font-size: 1rem;
+    color: #555;
+}
+
+.votos-gerais p span {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+#total-geral {
+    color: #e74c3c !important;
+}
+
