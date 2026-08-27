@@ -22,7 +22,7 @@ const btnIniciarEleicao = document.getElementById('btn-iniciar-eleicao');
 // Elementos de Votação
 const votoNumero = document.getElementById('voto-numero');
 const votoNome = document.getElementById('voto-nome');
-const votoFoto = document.getElementById('voto-foto'); // Elemento da foto
+const votoFoto = document.getElementById('voto-foto'); 
 const btnBranco = document.getElementById('btn-branco');
 const btnCorrige = document.getElementById('btn-corrige');
 const btnConfirma = document.getElementById('btn-confirma');
@@ -34,6 +34,7 @@ const totalBranco = document.getElementById('total-branco');
 const totalNulos = document.getElementById('total-nulos');
 const totalGeral = document.getElementById('total-geral');
 const btnReiniciar = document.getElementById('btn-reiniciar');
+const btnPdf = document.getElementById('btn-pdf'); // Novo botão mapeado
 const btnProximoEleitor = document.getElementById('btn-proximo-eleitor');
 
 // ==========================================
@@ -83,10 +84,8 @@ formCadastro.addEventListener('submit', (e) => {
         return;
     }
 
-    // Incrementa a ordem sequencial para a foto do candidato
     contadorOrdemCadastro++;
 
-    // Salva o candidato associando seu nome à ordem sequencial da foto
     candidatos[numero] = {
         nome: nome,
         ordemFoto: contadorOrdemCadastro
@@ -122,7 +121,7 @@ function iniciarVotacao() {
     votoNumero.removeAttribute('disabled');
     votoNumero.value = '';
     votoNome.innerText = '...';
-    votoFoto.style.display = 'none'; // Oculta a foto inicialmente
+    votoFoto.style.display = 'none'; 
     
     setTimeout(() => {
         votoNumero.focus();
@@ -143,13 +142,11 @@ votoNumero.addEventListener('input', () => {
 
     if (candidatos[numDigitado]) {
         votoNome.innerText = candidatos[numDigitado].nome;
-        
-        // AJUSTADO: Agora busca na pasta "foto" no singular conforme sua estrutura
         votoFoto.src = `foto/${candidatos[numDigitado].ordemFoto}.jpg`;
-        votoFoto.style.display = 'block'; // Mostra a imagem do candidato encontrado
+        votoFoto.style.display = 'block'; 
     } else {
         votoNome.innerText = 'VOTO NULO (Candidato não encontrado)';
-        votoFoto.style.display = 'none'; // Não exibe foto em votos nulos
+        votoFoto.style.display = 'none'; 
     }
 });
 
@@ -157,7 +154,7 @@ btnBranco.addEventListener('click', (e) => {
     e.preventDefault();
     votoNumero.value = '';
     votoNome.innerText = 'VOTO EM BRANCO';
-    votoFoto.style.display = 'none'; // Sem foto para voto em branco
+    votoFoto.style.display = 'none'; 
     votoNumero.disabled = true;
 });
 
@@ -195,7 +192,7 @@ function limparCamposVoto() {
     votoNumero.value = '';
     votoNumero.disabled = false;
     votoNome.innerText = '...';
-    votoFoto.style.display = 'none'; // Reseta o espaço da foto
+    votoFoto.style.display = 'none'; 
     votoNumero.focus();
 }
 
@@ -241,16 +238,50 @@ function gerarRelatorioFinal() {
     if (listaOrdenada.length === 0) {
         rankingCandidatos.innerHTML = '<p>Nenhum candidato cadastrado na eleição.</p>';
     } else {
+        const cabecalho = document.createElement('div');
+        cabecalho.className = 'linha-relatorio';
+        cabecalho.style.fontWeight = 'bold';
+        cabecalho.style.borderBottom = '2px solid #2c3e50';
+        cabecalho.style.color = '#2c3e50';
+        cabecalho.innerHTML = `
+            <span class="col-posicao">N.</span>
+            <span class="col-nome">NOME</span>
+            <span class="col-votos">QUANTIDADE</span>
+            <span class="col-pct">%</span>
+        `;
+        rankingCandidatos.appendChild(cabecalho);
+
         listaOrdenada.forEach((cand, index) => {
-            const p = document.createElement('p');
-            p.innerHTML = `<strong>${index + 1}º Lugar:</strong> ${cand.nome} (Nº ${cand.numero}) — <span>${cand.votos} voto(s)</span>`;
-            rankingCandidatos.appendChild(p);
+            let percentual = 0;
+            if (totalGeralVotos > 0) {
+                percentual = (cand.votos / totalGeralVotos) * 100;
+            }
+
+            const posicaoFormatada = String(index + 1).padStart(2, '0');
+
+            const divLinha = document.createElement('div');
+            divLinha.className = 'linha-relatorio';
+            divLinha.innerHTML = `
+                <span class="col-posicao" style="color:#7f8c8d;">${posicaoFormatada} -</span>
+                <span class="col-nome" style="font-weight:bold; text-transform:uppercase;">${cand.nome}</span>
+                <span class="col-votos" style="color:#16a085;">${cand.votos} VOTOS</span>
+                <span class="col-pct" style="color:#2980b9;">-${percentual.toFixed(1)}%</span>
+            `;
+            rankingCandidatos.appendChild(divLinha);
         });
     }
 
     totalBranco.innerText = votosBrancos;
     totalNulos.innerText = votosNulos;
     totalGeral.innerText = totalGeralVotos;
+}
+
+// Lógica para acionar a janela de salvamento/impressão em PDF
+if (btnPdf) {
+    btnPdf.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.print(); // Dispara o gerenciador nativo de PDF do sistema operacional
+    });
 }
 
 btnReiniciar.addEventListener('click', (e) => {
@@ -260,7 +291,7 @@ btnReiniciar.addEventListener('click', (e) => {
     votosBrancos = 0;
     votosNulos = 0;
     totalGeralVotos = 0;
-    contadorOrdemCadastro = 0; // Reseta a contagem de fotos para a nova eleição
+    contadorOrdemCadastro = 0; 
 
     limparCamposVoto();
     msgCadastro.innerText = '';
