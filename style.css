@@ -60,9 +60,9 @@ body {
 }
 
 /* ==========================================
-   CONTAINERS E ELEMENTOS DE TEXTO COMUNS
+   CONTAINERS DE TELAS (PADRÃO COMPACTO)
    ========================================== */
-#tela-cadastro, #tela-concluido {
+#tela-configuracao, #tela-cadastro, #tela-concluido {
     background: #ffffff;
     padding: 30px;
     border-radius: 12px;
@@ -103,14 +103,22 @@ h2, h3 {
     letter-spacing: 1px;
 }
 
+.instrucao-config {
+    font-size: 0.95rem;
+    color: #555;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
 /* ==========================================
-   ETAPA 1: FORMULÁRIO DE CADASTRO
+   FORMULÁRIOS DE CONFIGURAÇÃO E CADASTRO
    ========================================== */
-#form-cadastro div {
+#form-configuracao div, #form-cadastro div {
     margin-bottom: 15px;
 }
 
-#form-cadastro label {
+#form-configuracao label, #form-cadastro label {
     display: block;
     margin-bottom: 5px;
     color: #555;
@@ -118,7 +126,7 @@ h2, h3 {
     font-size: 0.9rem;
 }
 
-#form-cadastro input {
+#form-configuracao input, #form-cadastro input {
     width: 100%;
     padding: 12px;
     border: 2px solid #bdc3c7;
@@ -127,7 +135,7 @@ h2, h3 {
     transition: border-color 0.3s;
 }
 
-#form-cadastro input:focus {
+#form-configuracao input:focus, #form-cadastro input:focus {
     border-color: #3498db;
     outline: none;
 }
@@ -143,10 +151,10 @@ h2, h3 {
 /* ==========================================
    ESTILIZAÇÃO E CENTRALIZAÇÃO DE BOTÕES DO SISTEMA
    ========================================== */
-#btn-cadastrar, #btn-reiniciar, #btn-proximo-eleitor, #btn-iniciar-eleicao, #btn-pdf {
+#btn-salvar-config, #btn-cadastrar, #btn-reiniciar, #btn-proximo-eleitor, #btn-iniciar-eleicao, #btn-pdf {
     width: 100%;
     padding: 14px;
-    background-color: #3498db;
+    background-color: #3498db; 
     color: white;
     border: none;
     border-radius: 6px;
@@ -157,7 +165,9 @@ h2, h3 {
     text-transform: uppercase;
 }
 
-#btn-cadastrar:hover { background-color: #2980b9; }
+#btn-salvar-config:hover, #btn-cadastrar:hover { 
+    background-color: #2980b9; 
+}
 
 #btn-iniciar-eleicao {
     background-color: #27ae60;
@@ -169,7 +179,6 @@ h2, h3 {
 }
 #btn-iniciar-eleicao:hover { background-color: #219653; }
 
-/* Contêiner em grid para organizar os botões da tela final lado a lado */
 .botoes-resultado-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -177,9 +186,7 @@ h2, h3 {
     margin-top: 25px;
 }
 
-#btn-pdf {
-    background-color: #34495e;
-}
+#btn-pdf { background-color: #34495e; }
 #btn-pdf:hover { background-color: #2c3e50; }
 
 #btn-reiniciar { background-color: #27ae60; }
@@ -408,7 +415,6 @@ h2, h3 {
    MÍDIA PRINT: TRAVA E LIMPA O DOCUMENTO PDF
    ========================================== */
 @media print {
-    /* Esconde o fundo cinza, botões e elementos desnecessários na folha impressa */
     body {
         background-color: #ffffff !important;
         display: block !important;
@@ -416,7 +422,7 @@ h2, h3 {
     }
     
     #topo-republica, #rodape-tribunal, .botoes-resultado-container {
-        display: none !important; /* Remove cabeçalho da página web e botões do PDF */
+        display: none !important; 
     }
     
     #tela-resultado {
