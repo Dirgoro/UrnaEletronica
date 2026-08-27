@@ -9,70 +9,109 @@
 </head>
 <body>
 
-    <!-- ETAPA 1: TELA DE CADASTRO DE CANDIDATOS -->
-    <div id="tela-cadastro">
-        <h2>Cadastro de Candidatos (Até 10)</h2>
-        <form id="form-cadastro">
-            <div>
-                <label for="cad-numero">Número do Candidato:</label>
-                <input type="number" id="cad-numero" required min="1">
-            </div>
-            <div>
-                <label for="cad-nome">Nome do Candidato:</label>
-                <input type="text" id="cad-nome" required>
-            </div>
-            <button type="submit" id="btn-cadastrar">Cadastrar Candidato</button>
-        </form>
-        <p id="msg-cadastro"></p>
-    </div>
+    <!-- TOPO EM DESTAQUE -->
+    <header id="topo-republica">
+        <h1>REPÚBLICA FEDERATIVA DO BERRETA</h1>
+    </header>
 
-    <!-- ETAPA 2: TELA DE VOTAÇÃO (Inicia oculta) -->
-    <div id="tela-votacao" style="display: none;">
-        <div class="test">
-            <h2>Urna Eletrônica</h2>
+    <!-- CONTEÚDO CENTRALIZADO -->
+    <main class="conteudo-central">
+
+        <!-- ETAPA 1: TELA DE CADASTRO DE CANDIDATOS (Sem restrição de limite) -->
+        <div id="tela-cadastro">
+            <h2>Cadastro de Candidatos (Sem limite)</h2>
+            <form id="form-cadastro">
+                <div>
+                    <label for="cad-numero">Número do Candidato:</label>
+                    <input type="number" id="cad-numero" required min="1">
+                </div>
+                <div>
+                    <label for="cad-nome">Nome do Candidato:</label>
+                    <input type="text" id="cad-nome" required>
+                </div>
+                <button type="submit" id="btn-cadastrar">Cadastrar Candidato</button>
+            </form>
+            <p id="msg-cadastro"></p>
             
-            <div class="painel-voto">
-                <p class="instrucao">SEU VOTO VAI PARA:</p>
+            <!-- BOTÃO PARA INICIAR A ELEIÇÃO MANUALMENTE -->
+            <button id="btn-iniciar-eleicao">Iniciar Eleição</button>
+        </div>
+
+        <!-- ETAPA 2: TELA DE VOTAÇÃO (RETÂNGULO EXPANDIDO COM FOTO) -->
+        <div id="tela-votacao" style="display: none;">
+            <div class="test">
+                <h2>Urna Eletrônica</h2>
                 
-                <!-- Retângulo solicitado para inserção do número -->
-                <div class="campo-numero">
-                    <input type="number" id="voto-numero" placeholder="Nº" autofocus>
+                <div class="painel-voto">
+                    <p class="instrucao">SEU VOTO VAI PARA:</p>
+                    
+                    <!-- Painel Dividido Amplo do Visor da Urna -->
+                    <div class="visor-urna">
+                        <!-- Lado Esquerdo: Entrada Numérica -->
+                        <div class="campo-numero">
+                            <input type="number" id="voto-numero" placeholder="Nº" autofocus>
+                        </div>
+
+                        <!-- Lado Direito: Nome e Foto do Candidato -->
+                        <div class="info-candidato">
+                            <div class="bloco-texto-candidato">
+                                <p>NOME COMPLETO:</p>
+                                <div id="voto-nome">...</div>
+                            </div>
+                            <!-- Área da Imagem do Candidato -->
+                            <div class="container-foto-candidato">
+                                <img id="voto-foto" src="" alt="Foto do Candidato" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Campos dinâmicos preenchidos pelo JS -->
-                <div class="info-candidato">
-                    <p>Nome: <span id="voto-nome">...</span></p>
+                <!-- Botões de controle da urna -->
+                <div class="teclado-acoes">
+                    <button id="btn-branco">BRANCO</button>
+                    <button id="btn-corrige">CORRIGE</button>
+                    <button id="btn-confirma">CONFIRMA</button>
+                </div>
+                
+                <!-- CONTÊINER DO BOTÃO ADMINISTRATIVO (Canto Inferior Direito) -->
+                <div class="area-adm-encerrar">
+                    <button id="btn-encerrar">Encerrar Eleição</button>
                 </div>
             </div>
+        </div>
 
-            <!-- Botões de controle da urna -->
-            <div class="teclado-acoes">
-                <button id="btn-branco">BRANCO</button>
-                <button id="btn-corrige">CORRIGE</button>
-                <button id="btn-confirma">CONFIRMA</button>
+        <!-- ETAPA DE VOTO CONCLUÍDO (Inicia oculta) -->
+        <div id="tela-concluido" style="display: none; text-align: center;">
+            <div class="caixa-concluido">
+                <h2 style="font-size: 3rem; color: green; margin-bottom: 20px;">FIM</h2>
+                <p style="font-size: 1.5rem; margin-bottom: 30px;">Voto computado com sucesso!</p>
+                <button id="btn-proximo-eleitor">Próximo Eleitor</button>
             </div>
+        </div>
+
+        <!-- ETAPA 3: TELA DE RESULTADOS / RELATÓRIO FINAL (Inicia oculta) -->
+        <div id="tela-resultado" style="display: none;">
+            <h2>Relatório Final da Eleição</h2>
             
-            <!-- Botão administrativo para encerrar a votação e ver o relatório -->
-            <button id="btn-encerrar">Encerrar Eleição</button>
-        </div>
-    </div>
+            <div id="ranking-candidatos">
+                <!-- Lista com votos de cada candidato gerada por JS -->
+            </div>
 
-    <!-- ETAPA 3: TELA DE RESULTADOS / RELATÓRIO FINAL (Inicia oculta) -->
-    <div id="tela-resultado" style="display: none;">
-        <h2>Relatório Final da Eleição</h2>
-        
-        <div id="ranking-candidatos">
-            <!-- Lista com votos de cada candidato gerada por JS -->
-        </div>
+            <div class="votos-gerais">
+                <p>Votos em Branco: <span id="total-branco">0</span></p>
+                <p>Votos Nulos: <span id="total-nulos">0</span></p>
+                <p>Total Geral de Votos: <span id="total-geral">0</span></p>
+            </div>
 
-        <div class="votos-gerais">
-            <p>Votos em Branco: <span id="total-branco">0</span></p>
-            <p>Votos Nulos: <span id="total-nulos">0</span></p>
-            <p>Total Geral de Votos: <span id="total-geral">0</span></p>
+            <button id="btn-reiniciar">Nova Eleição</button>
         </div>
 
-        <button id="btn-reiniciar">Nova Eleição</button>
-    </div>
+    </main>
+
+    <!-- RODAPÉ TRADICIONAL -->
+    <footer id="rodape-tribunal">
+        <p>TRIBUNAL ELEITORAL DO BERRETA</p>
+    </footer>
 
     <!-- Vinculação do arquivo de comportamento dinâmico JavaScript -->
     <script src="script.js"></script>

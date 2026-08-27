@@ -1,4 +1,6 @@
-/* Configurações Globais */
+/* ==========================================
+   CONFIGURAÇÕES GLOBAIS E ESTRUTURA DO BODY
+   ========================================== */
 * {
     margin: 0;
     padding: 0;
@@ -8,21 +10,78 @@
 
 body {
     background-color: #f4f7f6;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    grid-template-rows: auto 1fr auto; 
     min-height: 100vh;
     padding: 20px;
 }
 
-/* Containers das Telas */
-#tela-cadastro, #tela-votacao, #tela-resultado {
+.conteudo-central {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px 0;
+}
+
+/* ==========================================
+   ELEMENTOS DE IDENTIDADE (TOPO E RODAPÉ)
+   ========================================== */
+#topo-republica {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 15px;
+    width: 100%;
+}
+
+#topo-republica h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin: 0;
+    color: #111;
+    text-transform: uppercase;
+}
+
+#rodape-tribunal {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px 0 10px 0;
+    border-top: 1px solid #ccc;
+    width: 100%;
+}
+
+#rodape-tribunal p {
+    font-size: 0.8rem;
+    color: #666;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+/* ==========================================
+   CONTAINERS E ELEMENTOS DE TEXTO COMUNS
+   ========================================== */
+#tela-cadastro, #tela-concluido {
     background: #ffffff;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 500px;
+    margin: 0 auto;
+}
+
+#tela-votacao, #tela-resultado {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 750px; 
+    margin: 0 auto;
+    position: relative;
+    padding-bottom: 90px; 
 }
 
 h2, h3 {
@@ -34,7 +93,9 @@ h2, h3 {
     letter-spacing: 1px;
 }
 
-/* Formulário de Cadastro */
+/* ==========================================
+   ETAPA 1: FORMULÁRIO DE CADASTRO
+   ========================================== */
 #form-cadastro div {
     margin-bottom: 15px;
 }
@@ -61,7 +122,18 @@ h2, h3 {
     outline: none;
 }
 
-#btn-cadastrar, #btn-encerrar, #btn-reiniciar {
+#msg-cadastro {
+    margin-top: 15px;
+    color: #27ae60;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* ==========================================
+   ESTILIZAÇÃO E CENTRALIZAÇÃO DE BOTÕES DO SISTEMA
+   ========================================== */
+#btn-cadastrar, #btn-reiniciar, #btn-proximo-eleitor, #btn-iniciar-eleicao {
     width: 100%;
     padding: 14px;
     background-color: #3498db;
@@ -75,28 +147,65 @@ h2, h3 {
     text-transform: uppercase;
 }
 
-#btn-cadastrar:hover { background-color: #2980b9; }
-#btn-encerrar { background-color: #c0392b; margin-top: 20px; }
-#btn-encerrar:hover { background-color: #a93226; }
-#btn-reiniciar { background-color: #27ae60; margin-top: 20px; }
-#btn-reiniciar:hover { background-color: #219653; }
-
-#msg-cadastro {
-    margin-top: 15px;
-    color: #27ae60;
-    text-align: center;
-    font-weight: bold;
-    font-size: 0.9rem;
+#btn-cadastrar:hover { 
+    background-color: #2980b9; 
 }
 
-/* Painel Visual da Urna */
+#btn-iniciar-eleicao {
+    background-color: #27ae60;
+    max-width: 250px; 
+    margin: 20px auto 0 auto; 
+    display: block; 
+    padding: 12px 20px;
+    font-size: 0.95rem;
+}
+
+#btn-iniciar-eleicao:hover { 
+    background-color: #219653; 
+}
+
+#btn-reiniciar { 
+    background-color: #27ae60; 
+    margin-top: 20px; 
+}
+
+#btn-reiniciar:hover { 
+    background-color: #219653; 
+}
+
+.area-adm-encerrar {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+}
+
+#btn-encerrar {
+    background-color: #c0392b;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-transform: uppercase;
+}
+
+#btn-encerrar:hover { 
+    background-color: #a93226; 
+}
+
+/* ==========================================
+   ETAPA 2: PAINEL VISUAL DA URNA ELETRÔNICA
+   ========================================== */
 .painel-voto {
     background-color: #eef2f3;
     border: 4px solid #34495e;
-    padding: 20px;
+    padding: 25px;
     border-radius: 8px;
-    margin-bottom: 20px;
-    min-height: 180px;
+    margin-bottom: 25px;
+    min-height: 220px; 
 }
 
 .instrucao {
@@ -104,19 +213,25 @@ h2, h3 {
     color: #7f8c8d;
     font-weight: bold;
     margin-bottom: 15px;
+    text-transform: uppercase;
 }
 
-/* O Retângulo Solicitado para Inserção do Número */
-.campo-numero {
+.visor-urna {
     display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+    justify-content: space-between;
+    align-items: center;
+    gap: 35px; 
+    width: 100%;
+}
+
+.campo-numero {
+    flex-shrink: 0;
 }
 
 #voto-numero {
-    width: 90px;
-    height: 70px;
-    font-size: 2rem;
+    width: 100px; 
+    height: 80px;
+    font-size: 2.5rem;
     font-weight: bold;
     text-align: center;
     border: 3px solid #2c3e50;
@@ -131,32 +246,69 @@ h2, h3 {
     margin: 0; 
 }
 
-/* Exibição Dinâmica do Nome */
+/* Alinhamento dividido interno à direita: Texto à esquerda e Foto à direita */
 .info-candidato {
-    font-size: 1.1rem;
+    flex-grow: 1; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.bloco-texto-candidato {
+    flex-grow: 1;
+    text-align: right;
+}
+
+.bloco-texto-candidato p {
+    font-size: 0.85rem;
+    color: #7f8c8d;
     font-weight: bold;
-    color: #2c3e50;
-    border-top: 1px solid #bdc3c7;
-    padding-top: 15px;
+    margin-bottom: 4px;
 }
 
 #voto-nome {
-    color: #2980b9;
+    color: #1a5276;
+    font-size: 2rem; 
+    font-weight: bold !important; 
+    text-transform: uppercase; 
+    word-wrap: break-word; 
+    line-height: 1.2;
+}
+
+/* Moldura proporcional para renderizar a imagem do candidato */
+.container-foto-candidato {
+    width: 110px;
+    height: 135px;
+    background-color: #ddd;
+    border: 2px solid #34495e;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+#voto-foto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Recorta a imagem proporcionalmente dentro da moldura */
 }
 
 /* Teclado de Ações da Urna */
 .teclado-acoes {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 15px; 
 }
 
 .teclado-acoes button {
-    padding: 15px 5px;
+    padding: 18px 5px; 
     border: none;
     border-radius: 4px;
     font-weight: bold;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     cursor: pointer;
     box-shadow: 0 4px 0 #7f8c8d;
     transition: transform 0.1s, box-shadow 0.1s;
@@ -184,10 +336,27 @@ h2, h3 {
     background-color: #2ecc71;
     color: #ffffff;
     box-shadow: 0 4px 0 #27ae60;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
 }
 
-/* Tela de Resultados / Relatório Final */
+/* ==========================================
+   ETAPA: TELA DE VOTO CONCLUÍDO (FIM)
+   ========================================== */
+.caixa-concluido {
+    padding: 10px 0;
+}
+
+#btn-proximo-eleitor {
+    background-color: #27ae60;
+}
+
+#btn-proximo-eleitor:hover {
+    background-color: #219653;
+}
+
+/* ==========================================
+   ETAPA 3: TELA DE RESULTADOS / RELATÓRIO
+   ========================================== */
 #ranking-candidatos {
     background: #f8f9fa;
     padding: 15px;
@@ -228,4 +397,3 @@ h2, h3 {
 #total-geral {
     color: #e74c3c !important;
 }
-

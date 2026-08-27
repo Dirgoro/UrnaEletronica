@@ -1,184 +1,271 @@
-// Armazenamento de dados do sistema
-let candidatos = [];
-let votosCandidatos = {}; // Estrutura: { numero: total_votos }
+// Base de dados e contadores da eleição
+let candidatos = {}; // Armazena chave: número -> valor: { nome, ordemFoto }
+let votosCandidatos = {}; // Armazena chave: número -> valor: quantidade de votos
 let votosBrancos = 0;
 let votosNulos = 0;
+let totalGeralVotos = 0;
+let contadorOrdemCadastro = 0; // Controla a sequência das fotos (1, 2, 3...)
 
-// Mapeamento dos elementos do HTML
+// Elementos das Telas
 const telaCadastro = document.getElementById('tela-cadastro');
+const telaVotacao = document.getElementById('tela-votacao');
+const telaConcluido = document.getElementById('tela-concluido');
+const telaResultado = document.getElementById('tela-resultado');
+
+// Elementos de Cadastro
 const formCadastro = document.getElementById('form-cadastro');
 const cadNumero = document.getElementById('cad-numero');
 const cadNome = document.getElementById('cad-nome');
 const msgCadastro = document.getElementById('msg-cadastro');
+const btnIniciarEleicao = document.getElementById('btn-iniciar-eleicao');
 
-const telaVotacao = document.getElementById('tela-votacao');
+// Elementos de Votação
 const votoNumero = document.getElementById('voto-numero');
 const votoNome = document.getElementById('voto-nome');
+const votoFoto = document.getElementById('voto-foto'); // Elemento da foto
 const btnBranco = document.getElementById('btn-branco');
 const btnCorrige = document.getElementById('btn-corrige');
 const btnConfirma = document.getElementById('btn-confirma');
 const btnEncerrar = document.getElementById('btn-encerrar');
 
-const telaResultado = document.getElementById('tela-resultado');
+// Elementos do Relatório Final
 const rankingCandidatos = document.getElementById('ranking-candidatos');
 const totalBranco = document.getElementById('total-branco');
 const totalNulos = document.getElementById('total-nulos');
 const totalGeral = document.getElementById('total-geral');
 const btnReiniciar = document.getElementById('btn-reiniciar');
+const btnProximoEleitor = document.getElementById('btn-proximo-eleitor');
 
 // ==========================================
-// ETAPA 1: FLUXO DE CADASTRO DE CANDIDATOS
+// SINTETIZADOR IDÊNTICO AO CHIP DE SOM DA URNA
 // ==========================================
-formCadastro.addEventListener('submit', function(e) {
+function tocarSomUrna() {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    
+    const ctx = new AudioContext();
+    const tempoAtual = ctx.currentTime;
+
+    const oscilador = ctx.createOscillator();
+    const ganho = ctx.createGain();
+
+    oscilador.type = 'square'; 
+
+    oscilador.frequency.setValueAtTime(1050, tempoAtual);          
+    oscilador.frequency.setValueAtTime(1175, tempoAtual + 0.07);   
+    oscilador.frequency.setValueAtTime(1320, tempoAtual + 0.14);   
+    oscilador.frequency.setValueAtTime(940, tempoAtual + 0.22);    
+
+    ganho.gain.setValueAtTime(0, tempoAtual);
+    ganho.gain.linearRampToValueAtTime(0.2, tempoAtual + 0.005);
+    ganho.gain.setValueAtTime(0.2, tempoAtual + 1.15);
+    ganho.gain.linearRampToValueAtTime(0, tempoAtual + 1.16);
+
+    oscilador.connect(ganho);
+    ganho.connect(ctx.destination);
+
+    oscilador.start(tempoAtual);
+    oscilador.stop(tempoAtual + 1.17); 
+}
+
+// ==========================================
+// ETAPA 1: LÓGICA DE CADASTRO DE CANDIDATOS
+// ==========================================
+formCadastro.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const numero = cadNumero.value.trim();
-    // Força o nome a ficar em LETRA MAIÚSCULA conforme a regra
-    const nome = cadNome.value.trim().toUpperCase();
+    const nome = cadNome.value.trim();
 
-    // Valida se o número já foi cadastrado
-    const numeroExiste = candidatos.some(c => c.numero === numero);
-    if (numeroExiste) {
-        alert('Este número de candidato já foi registrado!');
+    if (candidatos[numero]) {
+        msgCadastro.style.color = '#e74c3c';
+        msgCadastro.innerText = "Este número de candidato já foi registrado.";
         return;
     }
 
-    // Registra o candidato
-    candidatos.push({ numero: numero, nome: nome });
-    votosCandidatos[numero] = 0; // Inicializa o contador de votos dele
+    // Incrementa a ordem sequencial para a foto do candidato
+    contadorOrdemCadastro++;
 
-    msgCadastro.textContent = `Candidato ${nome} (${numero}) cadastrado com sucesso!`;
+    // Salva o candidato associando seu nome à ordem sequencial da foto
+    candidatos[numero] = {
+        nome: nome,
+        ordemFoto: contadorOrdemCadastro
+    };
+    votosCandidatos[numero] = 0;
+
+    msgCadastro.style.color = '#27ae60';
+    msgCadastro.innerText = `Candidato ${nome} (${numero}) cadastrado com sucesso! Foto associada: foto/${contadorOrdemCadastro}.jpg`;
+
     formCadastro.reset();
+    cadNumero.focus();
+});
 
-    // Verifica o limite máximo de 10 candidatos ou pergunta se quer continuar
-    if (candidatos.length >= 10) {
-        alert('Limite máximo de 10 candidatos atingido. Iniciando votação!');
-        irParaVotacao();
-    } else {
-        // Sempre perguntando se tem outro candidato para inserir
-        const desejaContinuar = confirm(`Candidatos cadastrados: ${candidatos.length}/10\nDeseja inserir outro candidato?`);
-        if (!desejaContinuar) {
-            irParaVotacao();
+if (btnIniciarEleicao) {
+    btnIniciarEleicao.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (Object.keys(candidatos).length === 0) {
+            msgCadastro.style.color = '#e74c3c';
+            msgCadastro.innerText = "Cadastre pelo menos 1 candidato antes de iniciar!";
+            return;
         }
+        
+        iniciarVotacao();
+    });
+}
+
+function iniciarVotacao() {
+    telaCadastro.style.display = 'none';
+    telaVotacao.style.display = 'block';
+    
+    votoNumero.removeAttribute('disabled');
+    votoNumero.value = '';
+    votoNome.innerText = '...';
+    votoFoto.style.display = 'none'; // Oculta a foto inicialmente
+    
+    setTimeout(() => {
+        votoNumero.focus();
+    }, 50);
+}
+
+// ==========================================
+// ETAPA 2: LÓGICA DA TELA DE VOTAÇÃO
+// ==========================================
+votoNumero.addEventListener('input', () => {
+    const numDigitado = votoNumero.value.trim();
+
+    if (numDigitado === '') {
+        votoNome.innerText = '...';
+        votoFoto.style.display = 'none';
+        return;
+    }
+
+    if (candidatos[numDigitado]) {
+        votoNome.innerText = candidatos[numDigitado].nome;
+        
+        // AJUSTADO: Agora busca na pasta "foto" no singular conforme sua estrutura
+        votoFoto.src = `foto/${candidatos[numDigitado].ordemFoto}.jpg`;
+        votoFoto.style.display = 'block'; // Mostra a imagem do candidato encontrado
+    } else {
+        votoNome.innerText = 'VOTO NULO (Candidato não encontrado)';
+        votoFoto.style.display = 'none'; // Não exibe foto em votos nulos
     }
 });
 
-function irParaVotacao() {
-    telaCadastro.style.display = 'none';
-    telaVotacao.style.display = 'block';
+btnBranco.addEventListener('click', (e) => {
+    e.preventDefault();
+    votoNumero.value = '';
+    votoNome.innerText = 'VOTO EM BRANCO';
+    votoFoto.style.display = 'none'; // Sem foto para voto em branco
+    votoNumero.disabled = true;
+});
+
+btnCorrige.addEventListener('click', (e) => {
+    e.preventDefault();
+    limparCamposVoto();
+});
+
+btnConfirma.addEventListener('click', (e) => {
+    e.preventDefault();
+    const numVoto = votoNumero.value.trim();
+    const textoNome = votoNome.innerText;
+
+    if (numVoto === '' && textoNome === '...') {
+        alert('Por favor, digite um número ou vote em Branco antes de confirmar.');
+        return;
+    }
+
+    if (textoNome === 'VOTO EM BRANCO') {
+        votosBrancos++;
+    } else if (textoNome === 'VOTO NULO (Candidato não encontrado)') {
+        votosNulos++;
+    } else if (candidatos[numVoto]) {
+        votosCandidatos[numVoto]++;
+    }
+
+    totalGeralVotos++;
+    tocarSomUrna();
+
+    telaVotacao.style.display = 'none';
+    telaConcluido.style.display = 'block';
+});
+
+function limparCamposVoto() {
+    votoNumero.value = '';
+    votoNumero.disabled = false;
+    votoNome.innerText = '...';
+    votoFoto.style.display = 'none'; // Reseta o espaço da foto
     votoNumero.focus();
 }
 
 // ==========================================
-// ETAPA 2: FLUXO DA TELA DE VOTAÇÃO
+// ETAPA: LÓGICA DO PRÓXIMO ELEITOR
 // ==========================================
-
-// Monitora o retângulo numérico para buscar o candidato em tempo real
-votoNumero.addEventListener('input', function() {
-    const numeroDigitado = votoNumero.value.trim();
-
-    if (numeroDigitado === "") {
-        votoNome.textContent = "...";
-        return;
-    }
-
-    // Busca o candidato cadastrado
-    const candidatoEncontrado = candidatos.find(c => c.numero === numeroDigitado);
-
-    if (candidatoEncontrado) {
-        votoNome.textContent = candidatoEncontrado.nome;
-    } else {
-        // Regra: caso o valor digitado não seja de nenhum candidato, aparece voto nulo
-        votoNome.textContent = "VOTO NULO";
-    }
-});
-
-// Ação do Botão CORRIGE
-btnCorrige.addEventListener('click', function() {
-    votoNumero.value = "";
-    votoNome.textContent = "...";
-    votoNumero.focus();
-});
-
-// Ação do Botão BRANCO
-btnBranco.addEventListener('click', function() {
-    votoNumero.value = "";
-    votoNome.textContent = "VOTO EM BRANCO";
-});
-
-// Ação do Botão CONFIRMA (Armazena o voto)
-btnConfirma.addEventListener('click', function() {
-    const numeroDigitado = votoNumero.value.trim();
-    const textoPainel = votoNome.textContent;
-
-    if (textoPainel === "...") {
-        alert("Por favor, digite um número ou vote em Branco antes de confirmar.");
-        return;
-    }
-
-    // Processa e computa o voto correto
-    if (textoPainel === "VOTO EM BRANCO") {
-        votosBrancos++;
-    } else if (textoPainel === "VOTO NULO") {
-        votosNulos++;
-    } else {
-        // Voto nominal válido
-        votosCandidatos[numeroDigitado]++;
-    }
-
-    alert("Voto confirmado com sucesso!");
+btnProximoEleitor.addEventListener('click', (e) => {
+    e.preventDefault();
+    limparCamposVoto();
     
-    // Limpa a tela para o próximo eleitor
-    votoNumero.value = "";
-    votoNome.textContent = "...";
+    telaConcluido.style.display = 'none';
+    telaVotacao.style.display = 'block';
     votoNumero.focus();
 });
 
-// Encerra a votação e monta o relatório final
-btnEncerrar.addEventListener('click', function() {
-    if (confirm("Deseja realmente encerrar a votação e ver o relatório final?")) {
-        exibirRelatorio();
-    }
-});
+// ==========================================
+// ETAPA 3: ENCERRAMENTO E RELATÓRIO FINAL
+// ==========================================
+btnEncerrar.addEventListener('click', (e) => {
+    e.preventDefault();
+    const confirmar = confirm("Tem certeza de que deseja encerrar a votação e gerar o relatório final?");
+    if (!confirmar) return;
 
-// ==========================================
-// ETAPA 3: RELATÓRIO FINAL E RESULTADOS
-// ==========================================
-function exibirRelatorio() {
     telaVotacao.style.display = 'none';
     telaResultado.style.display = 'block';
 
-    // Limpa listagem anterior do ranking
-    rankingCandidatos.innerHTML = "<h3>Resultado dos Candidatos:</h3>";
+    gerarRelatorioFinal();
+});
 
-    // Calcula o total geral de votos computados
-    let totalVotosNominais = Object.values(votosCandidatos).reduce((a, b) => a + b, 0);
-    let totalGeralVotos = totalVotosNominais + votosBrancos + votosNulos;
+function gerarRelatorioFinal() {
+    rankingCandidatos.innerHTML = ''; 
 
-    // Gera dinamicamente a lista com o total de votos de cada candidato relacionado
-    candidatos.forEach(c => {
-        const totalVotosDoCandidato = votosCandidatos[c.numero];
-        const p = document.createElement('p');
-        p.textContent = `${c.nome} (Nº ${c.numero}): ${totalVotosDoCandidato} voto(s)`;
-        rankingCandidatos.appendChild(p);
+    const listaOrdenada = Object.keys(votosCandidatos).map(numero => {
+        return {
+            numero: numero,
+            nome: candidatos[numero].nome,
+            votos: votosCandidatos[numero]
+        };
     });
 
-    // Atualiza os contadores textuais do relatório
-    totalBranco.textContent = votosBrancos;
-    totalNulos.textContent = votosNulos;
-    totalGeral.textContent = totalGeralVotos;
+    listaOrdenada.sort((a, b) => b.votos - a.votos);
+
+    if (listaOrdenada.length === 0) {
+        rankingCandidatos.innerHTML = '<p>Nenhum candidato cadastrado na eleição.</p>';
+    } else {
+        listaOrdenada.forEach((cand, index) => {
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>${index + 1}º Lugar:</strong> ${cand.nome} (Nº ${cand.numero}) — <span>${cand.votos} voto(s)</span>`;
+            rankingCandidatos.appendChild(p);
+        });
+    }
+
+    totalBranco.innerText = votosBrancos;
+    totalNulos.innerText = votosNulos;
+    totalGeral.innerText = totalGeralVotos;
 }
 
-// Botão para reiniciar todo o sistema e apagar os dados da memória
-btnReiniciar.addEventListener('click', function() {
-    if (confirm("Isso apagará todos os dados e candidatos. Continuar?")) {
-        candidatos = [];
-        votosCandidatos = {};
-        votosBrancos = 0;
-        votosNulos = 0;
-        
-        telaResultado.style.display = 'none';
-        telaCadastro.style.display = 'block';
-        msgCadastro.textContent = "";
-    }
+btnReiniciar.addEventListener('click', (e) => {
+    e.preventDefault();
+    candidatos = {};
+    votosCandidatos = {};
+    votosBrancos = 0;
+    votosNulos = 0;
+    totalGeralVotos = 0;
+    contadorOrdemCadastro = 0; // Reseta a contagem de fotos para a nova eleição
+
+    limparCamposVoto();
+    msgCadastro.innerText = '';
+    
+    telaResultado.style.display = 'none';
+    telaCadastro.style.display = 'block';
+    cadNumero.focus();
 });
